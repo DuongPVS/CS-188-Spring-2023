@@ -491,9 +491,26 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    position, foodList = state[0], state[1].asList()
+
+    # Return 0 if in a goal state
+    if len(foodList) == 0:
+        return 0
+
+    maxDist, minDist = 0, 999999
+    maxSquare = None
+    minSquare = None
+
+    # Find the nearest and farthest food squares from current state
+    for foodSquare in foodList:
+        dist = util.manhattanDistance(position, foodSquare)
+        if dist < minDist: minDist, minSquare = dist, foodSquare
+        if dist > maxDist: maxDist, maxSquare = dist, foodSquare
+
+    # Return the distance to nearest food square plus the distance between the nearest and farthest food squares
+    # This is admissible because Pacman will have to get to the nearest and farthest food eventually, and the
+    # route calculated here is the shortest Manhattan distance to reach those two states.
+    return minDist + util.manhattanDistance(minSquare, maxSquare)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -524,6 +541,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
+        return search.aStarSearch(problem)
         util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -560,6 +578,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
+        return self.food[state[0]][state[1]]
         util.raiseNotDefined()
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
