@@ -157,6 +157,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     priorityQueue = util.PriorityQueue()
     priorityQueue.push((problem.getStartState(), [], 0), 0)
     visited = []
+    print("banana", problem.getStartState())
 
     while not priorityQueue.isEmpty():
         element = priorityQueue.pop()
